@@ -1,11 +1,17 @@
 import os
 import mysql.connector
 from dotenv import load_dotenv
+from pathlib import Path
 
 load_dotenv()
 
+raiz = Path(__file__).resolve().parent.parent
+caminho_schema = raiz / "sql" / "schema.sql"
 
 def init_db():
+    conn = None
+    cursor = None
+    
     try:
         conn = mysql.connector.connect(
             host=os.getenv("DB_HOST"),
@@ -14,7 +20,7 @@ def init_db():
         )
         cursor = conn.cursor()
 
-        with open("sql/schema.sql", "r", encoding="utf-8") as f:
+        with open(caminho_schema, "r", encoding="utf-8") as f:
             schema_script = f.read()
 
         for comando in schema_script.split(";"):
@@ -23,11 +29,16 @@ def init_db():
                 cursor.execute(comando)
 
         conn.commit()
-        cursor.close()
-        conn.close()
         print("Banco de dados e tabelas inicializados com sucesso!")
-    except Exception as erro:
+    except mysql.connector.Error as erro:
         print(f"Erro ao inicializar o banco de dados: {erro}")
+    except FileNotFoundError as erro:
+        print(f"Erro ao encontrar o script do banco de dados: {erro}")
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conn is not None:
+            conn.close()
 
 
 def connection():
