@@ -7,7 +7,7 @@ load_dotenv()
 def init_db():
     conn = None
     cursor = None
-
+    
     try:
         conn = mysql.connector.connect(
             host=os.getenv("DB_HOST"),
@@ -26,8 +26,10 @@ def init_db():
 
         conn.commit()
         print("Banco de dados e tabelas inicializados com sucesso!")
-    except Exception as erro:
+    except mysql.connector.Error as erro:
         print(f"Erro ao inicializar o banco de dados: {erro}")
+    except FileNotFoundError as erro:
+        print(f"Erro ao encontrar o script do banco de dados: {erro}")
     finally:
         if cursor is not None:
             cursor.close()
