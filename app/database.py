@@ -4,8 +4,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
 def init_db():
+    conn = None
+    cursor = None
+
     try:
         conn = mysql.connector.connect(
             host=os.getenv("DB_HOST"),
@@ -23,11 +25,14 @@ def init_db():
                 cursor.execute(comando)
 
         conn.commit()
-        cursor.close()
-        conn.close()
         print("Banco de dados e tabelas inicializados com sucesso!")
     except Exception as erro:
         print(f"Erro ao inicializar o banco de dados: {erro}")
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conn is not None:
+            conn.close()
 
 
 def connection():
