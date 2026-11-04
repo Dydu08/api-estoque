@@ -30,10 +30,13 @@ def init_db():
 
         conn.commit()
         print("Banco de dados e tabelas inicializados com sucesso!")
+
     except mysql.connector.Error as erro:
         print(f"Erro ao inicializar o banco de dados: {erro}")
+        
     except FileNotFoundError as erro:
         print(f"Erro ao encontrar o script do banco de dados: {erro}")
+
     finally:
         if cursor is not None:
             cursor.close()
@@ -50,9 +53,35 @@ def connection():
             database=os.getenv("DB_NAME")
         )
         return conn
+    
     except mysql.connector.Error as erro:
         print(f"Erro na conexão com o MySQL: {erro}")
         return None
+
+
+def criar_categoria(nome):
+    conn = None
+    cursor = None
+    try:
+        conn = connection()
+        if conn is None:
+            return None
+        
+        cursor = conn.cursor()
+        sql = "INSERT INTO categorias(nome) VALUES (%s)"
+        cursor.execute(sql, (nome,))
+        conn.commit()
+        return cursor.lastrowid
+    
+    except mysql.connector.Error as erro:
+        print(f"Erro ao criar categoria: {erro}")
+        return None
+    
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conn is not None:
+            conn.close()
 
 
 if __name__ == "__main__":
@@ -64,3 +93,6 @@ if __name__ == "__main__":
         conn.close()
     else:
         print("Falha ao conectar no banco de dados.")
+
+    novo_id = criar_categoria("Bebidas")
+    print(f"Categoria criada com id: {novo_id}")
