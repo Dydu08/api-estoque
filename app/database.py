@@ -59,22 +59,49 @@ def connection():
         return None
 
 
-def criar_categoria(nome):
+def criar_categoria(nome, descricao=None):
     conn = None
     cursor = None
+
     try:
         conn = connection()
         if conn is None:
             return None
-        
+
         cursor = conn.cursor()
-        sql = "INSERT INTO categorias(nome) VALUES (%s)"
-        cursor.execute(sql, (nome,))
+        sql = "INSERT INTO categorias (nome, descricao) VALUES (%s, %s)"
+        cursor.execute(sql, (nome, descricao))
+        conn.commit()
+        return cursor.lastrowid
+
+    except mysql.connector.Error as erro:
+        print(f"Erro ao criar a categoria: {erro}")
+        return None
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conn is not None:
+            conn.close()
+
+
+def criar_produto(nome, preco, quantidade, categoria_id, descricao=None):
+    conn = None
+    cursor = None
+
+    try:
+        conn = connection()
+        if conn is None:
+            return None
+
+        cursor = conn.cursor()  
+        sql = "INSERT INTO produtos(nome, descricao, preco, quantidade, categoria_id) VALUES(%s, %s, %s, %s, %s)"
+        cursor.execute(sql, (nome, descricao, preco, quantidade, categoria_id))
         conn.commit()
         return cursor.lastrowid
     
     except mysql.connector.Error as erro:
-        print(f"Erro ao criar categoria: {erro}")
+        print(f"Erro ao criar o produto: {erro}")
         return None
     
     finally:
@@ -87,6 +114,7 @@ def criar_categoria(nome):
 def listar_categorias():
     conn = None
     cursor = None
+
     try:
         conn = connection()
         if conn is None:
@@ -111,4 +139,3 @@ def listar_categorias():
 
 if __name__ == "__main__":
     init_db()
-    
