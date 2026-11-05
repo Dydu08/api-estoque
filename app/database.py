@@ -93,6 +93,3 @@ if __name__ == "__main__":
         conn.close()
     else:
         print("Falha ao conectar no banco de dados.")
-
-    novo_id = criar_categoria("Bebidas")
-    print(f"Categoria criada com id: {novo_id}")
