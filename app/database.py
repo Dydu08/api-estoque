@@ -84,12 +84,31 @@ def criar_categoria(nome):
             conn.close()
 
 
+def listar_categorias():
+    conn = None
+    cursor = None
+    try:
+        conn = connection()
+        if conn is None:
+            return None
+        
+        cursor = conn.cursor(dictionary=True)
+        sql = "SELECT id, nome, descricao FROM categorias"
+        cursor.execute(sql)
+        resultado = cursor.fetchall()
+        return resultado
+
+    except mysql.connector.Error as erro:
+        print(f"Erro ao listar as categorias: {erro}")
+        return None
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conn is not None:
+            conn.close()
+
+
 if __name__ == "__main__":
     init_db()
-
-    conn = connection()
-    if conn and conn.is_connected():
-        print("Conexão com o MySQL realizada com sucesso!")
-        conn.close()
-    else:
-        print("Falha ao conectar no banco de dados.")
+    
