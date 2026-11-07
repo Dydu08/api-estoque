@@ -137,5 +137,31 @@ def listar_categorias():
             conn.close()
 
 
+def listar_produtos():
+    conn = None
+    cursor = None
+
+    try:
+        conn = connection()
+        if conn is None:
+            return None
+
+        cursor = conn.cursor(dictionary=True)
+        sql = "SELECT id, nome, descricao, preco, quantidade, categoria_id FROM produtos"
+        cursor.execute(sql)
+        resultado = cursor.fetchall()
+        return resultado
+
+    except mysql.connector.Error as erro:
+        print(f"Erro ao listar os produtos: {erro}")
+        return None
+    
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conn is not None:
+            conn.close()
+
+
 if __name__ == "__main__":
     init_db()
