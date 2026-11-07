@@ -193,5 +193,35 @@ def atualizar_categoria(id_categoria, nome, descricao=None):
             conn.close()
 
 
+def atualizar_produto(id_produto, nome, preco, quantidade, categoria_id, descricao=None):
+    conn = None
+    cursor = None
+
+    try:
+        conn = connection()
+        if conn is None:
+            return None
+
+        cursor = conn.cursor()
+        sql = "UPDATE produtos SET nome = %s, preco = %s, quantidade = %s, categoria_id = %s, descricao = %s WHERE id = %s"
+        cursor.execute(sql, (nome, preco, quantidade, categoria_id, descricao, id_produto))
+        conn.commit()
+
+        if cursor.rowcount == 0:
+            return False
+        else:
+            return True
+
+    except mysql.connector.Error as erro:
+        print(f"Erro ao atualizar o produto: {erro}")
+        return None
+            
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conn is not None:
+            conn.close()
+
+
 if __name__ == "__main__":
     init_db()
