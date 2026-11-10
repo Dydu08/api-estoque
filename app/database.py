@@ -253,5 +253,35 @@ def apagar_produto(id_produto):
             conn.close()
 
 
+def apagar_categoria(id_categoria):
+    conn = None
+    cursor = None
+
+    try:
+        conn = connection()
+        if conn is None:
+            return None
+        
+        cursor = conn.cursor()
+        sql = "DELETE FROM categorias WHERE id = %s"
+        cursor.execute(sql, (id_categoria,))
+        conn.commit()
+
+        if cursor.rowcount == 0:
+            return False
+        else:
+            return True
+        
+    except mysql.connector.Error as erro:
+        print(f"Erro ao apagar a categoria: {erro}")
+        return None
+                
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conn is not None:
+            conn.close()
+
+
 if __name__ == "__main__":
     init_db()
